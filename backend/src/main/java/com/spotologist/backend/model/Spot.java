@@ -39,6 +39,7 @@ public class Spot {
     @Column(nullable = false)
     private String address;
 
+    @Setter
     @Column(name = "is_public", nullable = false)
     private boolean isPublic = true;
 

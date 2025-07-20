@@ -14,3 +14,6 @@ docker compose up -d
 - DB runs in Docker (`spotdb`, user: `spotuser`, pass: `spotpass`)
 - Endpoints available at `http://localhost:8080/...` as defined in controllers
 - No DB setup needed beyond `docker compose up`
+- Access **Swagger** UI at: http://localhost:8080/swagger-ui/index.html
+
+Use it to explore and test API endpoints interactively.

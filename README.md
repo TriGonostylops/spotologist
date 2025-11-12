@@ -17,10 +17,8 @@ cd backend
 ## Run frontend (dev) with Dockerized DB/back-end
 
 ```powershell
-# from project root: start Postgres and backend containers
 docker compose up -d
 
-# in a new terminal: start the Angular dev server locally
 cd frontend
 npm install
 npm start

@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: spotologist
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spotdb
+    username: spotuser
+    password: spotpass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

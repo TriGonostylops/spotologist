@@ -1,6 +1,6 @@
-package com.spotologist.backend.repository;
+package com.spotologist.spots.repository;
 
-import com.spotologist.backend.model.Spot;
+import com.spotologist.spots.model.Spot;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,7 +1,7 @@
-package com.spotologist.backend.controller;
+package com.spotologist.spots.controller;
 
-import com.spotologist.backend.model.Spot;
-import com.spotologist.backend.repository.SpotRepository;
+import com.spotologist.spots.model.Spot;
+import com.spotologist.spots.repository.SpotRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,7 +52,6 @@ public class SpotController {
             spot.setAddress(updatedSpot.getAddress());
             spot.setPublic(updatedSpot.isPublic());
             spot.setUserId(updatedSpot.getUserId());
-            // updatedAt will be set automatically if you have @PreUpdate
             Spot savedSpot = spotRepository.save(spot);
             return ResponseEntity.ok(savedSpot);
         }).orElseGet(() -> ResponseEntity.notFound().build());

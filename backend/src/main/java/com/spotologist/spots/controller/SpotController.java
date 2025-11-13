@@ -1,9 +1,15 @@
 package com.spotologist.spots.controller;
 
 import com.spotologist.spots.model.Spot;
-import com.spotologist.spots.repository.SpotRepository;
+import com.spotologist.spots.service.SpotService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,56 +18,37 @@ import java.util.Optional;
 @RequestMapping("/api/spots")
 public class SpotController {
 
-    private final SpotRepository spotRepository;
+    private final SpotService spotService;
 
-    public SpotController(SpotRepository spotRepository) {
-        this.spotRepository = spotRepository;
+    public SpotController(SpotService spotService) {
+        this.spotService = spotService;
     }
 
     @PostMapping
-    public Spot createSpot(@RequestBody Spot spot) {
-        return spotRepository.save(spot);
+    public ResponseEntity<Void> createSpot(@RequestBody Spot spot) {
+        try {
+            spotService.saveSpot(spot);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping
     public List<Spot> getAllSpots() {
-        return spotRepository.findAll();
-    }
-
-    @GetMapping("/user/{userId}")
-    public List<Spot> getSpotsByUserId(@PathVariable Long userId) {
-        return spotRepository.findByUserId(userId);
+        return spotService.getAllSpots();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Spot> getSpotById(@PathVariable Long id) {
-        Optional<Spot> spot = spotRepository.findById(id);
-        return spot.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<Spot> spot = spotService.findSpotById(id);
+        return spot.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Spot> updateSpot(@PathVariable Long id, @RequestBody Spot updatedSpot) {
-        return spotRepository.findById(id).map(spot -> {
-            spot.setTitle(updatedSpot.getTitle());
-            spot.setDescription(updatedSpot.getDescription());
-            spot.setLatitude(updatedSpot.getLatitude());
-            spot.setLongitude(updatedSpot.getLongitude());
-            spot.setCity(updatedSpot.getCity());
-            spot.setCountry(updatedSpot.getCountry());
-            spot.setAddress(updatedSpot.getAddress());
-            spot.setPublic(updatedSpot.isPublic());
-            spot.setUserId(updatedSpot.getUserId());
-            Spot savedSpot = spotRepository.save(spot);
-            return ResponseEntity.ok(savedSpot);
-        }).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSpot(@PathVariable Long id) {
-        if (spotRepository.existsById(id)) {
-            spotRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
+        if(spotService.updateSpotById(id, updatedSpot).isPresent()) {
+            return ResponseEntity.ok(updatedSpot);
         } else {
             return ResponseEntity.notFound().build();
         }

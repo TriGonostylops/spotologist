@@ -18,7 +18,6 @@ export class SpotsComponent implements OnInit {
   message: string | null = null;
 
   ngOnInit(): void {
-    // Delegate data access to the service (best practice)
     this.spotsService
       .hello()
       .subscribe({

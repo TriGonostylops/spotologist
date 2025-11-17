@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { SpotsComponent } from './spots/spots';
+import { SpotsComponent } from './features/spots/spots';
 
 export const routes: Routes = [
   { path: '', component: SpotsComponent },

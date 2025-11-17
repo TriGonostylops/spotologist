@@ -1,0 +1,9 @@
+<header class="app-header">
+  <div class="brand">Spotologist</div>
+
+  <nav class="nav" aria-label="Primary">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Spots</a>
+  </nav>
+
+  <app-authentication (signIn)="onSignIn()"></app-authentication>
+</header>

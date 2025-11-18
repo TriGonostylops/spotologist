@@ -43,8 +43,8 @@ public class Spot {
     @Column(name = "is_public", nullable = false)
     private boolean isPublic = true;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "owner_sub")
+    private String ownerSub;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

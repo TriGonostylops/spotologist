@@ -63,10 +63,9 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: user_id
-                  type: BIGINT
-                  constraints:
-                    nullable: false
+                  name: owner_sub
+                  type: VARCHAR(255)
+                  remarks: Owner identifier from authentication subject (e.g., Google sub)
               - column:
                   name: created_at
                   type: TIMESTAMP
@@ -77,6 +76,15 @@ databaseChangeLog:
                   type: TIMESTAMP
                   constraints:
                     nullable: false
+        - createIndex:
+            tableName: spot
+            indexName: idx_spot_owner_sub
+            columns:
+              - column:
+                  name: owner_sub
       rollback:
+        - dropIndex:
+            tableName: spot
+            indexName: idx_spot_owner_sub
         - dropTable:
             tableName: spot

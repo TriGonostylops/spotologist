@@ -15,8 +15,8 @@ public class SpotService {
         this.spotRepository = spotRepository;
     }
 
-    public void saveSpot(Spot spot) {
-        spotRepository.save(spot);
+    public Spot saveSpot(Spot spot) {
+        return spotRepository.save(spot);
     }
 
     public List<Spot> getAllSpots() {
@@ -37,9 +37,7 @@ public class SpotService {
             spot.setCountry(updatedSpotDto.getCountry());
             spot.setAddress(updatedSpotDto.getAddress());
             spot.setPublic(updatedSpotDto.isPublic());
-            spot.setUserId(updatedSpotDto.getUserId());
-            spotRepository.save(spot);
-            return spot;
+            return spotRepository.save(spot);
         });
     }
 }

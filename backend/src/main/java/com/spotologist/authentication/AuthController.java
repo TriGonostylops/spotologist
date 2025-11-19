@@ -1,12 +1,17 @@
 package com.spotologist.authentication;
 
+import com.spotologist.authentication.model.IssuedNonce;
 import com.spotologist.common.GoogleTokenVerifier;
+import com.spotologist.authentication.model.GoogleUser;
+import com.spotologist.features.user.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.jwt.JwsHeader;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,16 +26,28 @@ public class AuthController {
     private final JwtEncoder jwtEncoder;
     private final GoogleTokenVerifier googleTokenVerifier;
     private final UserService userService;
+    private final NonceService nonceService;
 
-    public AuthController(JwtEncoder jwtEncoder, GoogleTokenVerifier googleTokenVerifier, UserService userService) {
+    public AuthController(JwtEncoder jwtEncoder, GoogleTokenVerifier googleTokenVerifier, UserService userService, NonceService nonceService) {
         this.jwtEncoder = jwtEncoder;
         this.googleTokenVerifier = googleTokenVerifier;
         this.userService = userService;
+        this.nonceService = nonceService;
+    }
+
+    @GetMapping("/nonce")
+    public ResponseEntity<IssuedNonce> nonce() {
+        return ResponseEntity.ok(nonceService.issue());
+        
     }
 
     @PostMapping("/google")
     public ResponseEntity<TokenResponse> google(@RequestBody IdTokenRequest req) {
-        GoogleUser user = googleTokenVerifier.verify(req.idToken());
+        if (req.nonce() == null || !nonceService.consume(req.nonce())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        GoogleUser user = googleTokenVerifier.verify(req.idToken(), req.nonce());
 
         userService.upsert(user);
 
@@ -51,6 +68,6 @@ public class AuthController {
         return ResponseEntity.ok(new TokenResponse(token, expirySeconds));
     }
 
-    public record IdTokenRequest(String idToken) {}
+    public record IdTokenRequest(String idToken, String nonce) {}
     public record TokenResponse(String accessToken, long expiresIn) {}
 }

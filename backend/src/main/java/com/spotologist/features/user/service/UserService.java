@@ -1,5 +1,6 @@
-package com.spotologist.authentication;
+package com.spotologist.features.user.service;
 
+import com.spotologist.authentication.model.GoogleUser;
 import com.spotologist.features.user.model.User;
 import com.spotologist.features.user.repository.UserRepository;
 import org.springframework.stereotype.Service;

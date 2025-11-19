@@ -9,7 +9,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import com.spotologist.authentication.model.GoogleUser;
+import com.spotologist.authentication.GoogleUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
@@ -50,10 +50,10 @@ public class GoogleTokenVerifier {
                 throw new BadCredentialsException("Token expired");
             }
 
-            String sub = claims.getSubject();
+            String subject = claims.getSubject();
             String email = claims.getStringClaim("email");
             String name = (String) claims.getClaim("name");
-            return new GoogleUser(sub, email, name);
+            return new GoogleUser(subject, email, name);
         } catch (Exception e) {
             throw new BadCredentialsException("Invalid Google ID token", e);
         }

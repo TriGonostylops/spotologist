@@ -1,4 +1,4 @@
-package com.spotologist.config.security;
+package com.spotologist.config;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.proc.SecurityContext;

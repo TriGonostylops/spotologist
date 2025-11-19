@@ -1,7 +1,7 @@
-package com.spotologist.spots.service;
+package com.spotologist.features.spots.service;
 
-import com.spotologist.spots.model.Spot;
-import com.spotologist.spots.repository.SpotRepository;
+import com.spotologist.features.spots.model.Spot;
+import com.spotologist.features.spots.repository.SpotRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

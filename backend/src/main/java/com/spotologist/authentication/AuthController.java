@@ -1,8 +1,6 @@
-package com.spotologist.authentication.controller;
+package com.spotologist.authentication;
 
 import com.spotologist.common.GoogleTokenVerifier;
-import com.spotologist.authentication.model.GoogleUser;
-import com.spotologist.authentication.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -40,7 +38,7 @@ public class AuthController {
                 .issuer("spotologist-backend")
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expirySeconds))
-                .subject(user.sub())
+                .subject(user.subject())
                 .claim("email", user.email())
                 .claim("name", user.name())
                 .build();

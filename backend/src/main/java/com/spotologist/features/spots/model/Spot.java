@@ -1,4 +1,4 @@
-package com.spotologist.spots.model;
+package com.spotologist.features.spots.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

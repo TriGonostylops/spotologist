@@ -1,7 +1,7 @@
-package com.spotologist.spots.controller;
+package com.spotologist.features.spots.controller;
 
-import com.spotologist.spots.model.Spot;
-import com.spotologist.spots.service.SpotService;
+import com.spotologist.features.spots.model.Spot;
+import com.spotologist.features.spots.service.SpotService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

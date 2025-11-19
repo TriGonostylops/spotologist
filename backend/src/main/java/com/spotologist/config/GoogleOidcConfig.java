@@ -1,4 +1,4 @@
-package com.spotologist.authentication.config;
+package com.spotologist.config;
 
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;

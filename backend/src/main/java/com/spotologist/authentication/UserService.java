@@ -1,8 +1,7 @@
-package com.spotologist.authentication.service;
+package com.spotologist.authentication;
 
-import com.spotologist.authentication.model.GoogleUser;
-import com.spotologist.user.model.User;
-import com.spotologist.user.repository.UserRepository;
+import com.spotologist.features.user.model.User;
+import com.spotologist.features.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -17,14 +16,14 @@ public class UserService {
     }
 
     public void upsert(GoogleUser googleUser) {
-        User user = userRepository.findById(googleUser.sub())
+        User user = userRepository.findById(googleUser.subject())
                 .map(existing -> {
                     existing.setEmail(googleUser.email());
                     existing.setName(googleUser.name());
                     existing.setLastLogin(Instant.now());
                     return existing;
                 })
-                .orElseGet(() -> new User(googleUser.sub(), googleUser.email(), googleUser.name(), Instant.now(), Instant.now()));
+                .orElseGet(() -> new User(googleUser.subject(), googleUser.email(), googleUser.name(), Instant.now(), Instant.now()));
         userRepository.save(user);
     }
 }

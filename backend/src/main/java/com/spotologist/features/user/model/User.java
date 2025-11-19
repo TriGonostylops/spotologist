@@ -1,4 +1,4 @@
-package com.spotologist.user.model;
+package com.spotologist.features.user.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

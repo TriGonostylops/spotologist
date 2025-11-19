@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/google").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/spots", "/api/spots/*", "/api/spots/hello").permitAll() // if you want public read
+                        .requestMatchers(HttpMethod.GET, "/api/spots", "/api/spots/*", "/api/spots/hello").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -56,14 +56,14 @@ public class SecurityConfig {
 
     @Bean
     JwtDecoder jwtDecoder() {
-        String secret = System.getenv().getOrDefault("JWT_HS256_SECRET", "dev-secret-change-me");
+        String secret = System.getenv().getOrDefault("JWT_HS256_SECRET", "BqabkJAeVi05MyT8+ByDIGEFzW8pC9+XT7eu58G4abXqt7yyygjE64OBy9SqGZPo\n" + "4GAF2L+/5WUL2/YuTC677Q==");
         SecretKeySpec key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(key).build();
     }
 
     @Bean
     JwtEncoder jwtEncoder() {
-        String secret = System.getenv().getOrDefault("JWT_HS256_SECRET", "dev-secret-change-me");
+        String secret = System.getenv().getOrDefault("JWT_HS256_SECRET", "BqabkJAeVi05MyT8+ByDIGEFzW8pC9+XT7eu58G4abXqt7yyygjE64OBy9SqGZPo\n" + "4GAF2L+/5WUL2/YuTC677Q==");
         SecretKeySpec key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         ImmutableSecret<SecurityContext> immutableSecret = new ImmutableSecret<>(key);
         return new NimbusJwtEncoder(immutableSecret);

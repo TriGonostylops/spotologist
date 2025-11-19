@@ -9,7 +9,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import com.spotologist.authentication.GoogleUser;
+import com.spotologist.authentication.model.GoogleUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class GoogleTokenVerifier {
         this.clientId = clientId;
     }
 
-    public GoogleUser verify(String idToken) {
+    public GoogleUser verify(String idToken, String expectedNonce) {
         try {
             SignedJWT jwt = SignedJWT.parse(idToken);
 
@@ -48,6 +48,13 @@ public class GoogleTokenVerifier {
             Date exp = claims.getExpirationTime();
             if (exp == null || exp.toInstant().isBefore(Instant.now())) {
                 throw new BadCredentialsException("Token expired");
+            }
+
+            if (expectedNonce != null && !expectedNonce.isBlank()) {
+                String nonceClaim = claims.getStringClaim("nonce");
+                if (!expectedNonce.equals(nonceClaim)) {
+                    throw new BadCredentialsException("Invalid nonce");
+                }
             }
 
             String subject = claims.getSubject();

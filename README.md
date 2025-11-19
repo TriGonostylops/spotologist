@@ -24,3 +24,9 @@ npm install
 npm start
 ```
 - Frontend dev server: http://localhost:4200/
+
+## Important notes: 
+ - Users are authenticated via **oidc** + **gis**.
+   - this uses only the _frontlayer_ with _symmetric keys_.
+   - nonces were added to mitigate the risk of _replay attacks_
+   - **important:** nonces are stored via Caffeine, this is a cache in the server that stores these numbers. scaling the project with multiple servers will break this and the nonce store will become inconsistent.

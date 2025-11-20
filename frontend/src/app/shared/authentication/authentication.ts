@@ -1,7 +1,9 @@
-import { Component, ElementRef, OnDestroy, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, AfterViewInit, ViewChild, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService, AuthUser } from '../auth/auth.service';
+import { AuthService } from '../../core/auth/services/auth.service';
 import { Observable, Subscription } from 'rxjs';
+import {AuthUser} from '../../core/auth/types/AuthUser';
+import {GoogleIdentityService} from '../../core/auth/services/google.identity.service';
 
 @Component({
   selector: 'app-authentication',
@@ -12,11 +14,13 @@ import { Observable, Subscription } from 'rxjs';
 })
 export class Authentication implements OnInit, AfterViewInit, OnDestroy {
   private _googleBtn?: ElementRef<HTMLElement>;
+  private readonly googleIdentityService = inject(GoogleIdentityService);
+
   @ViewChild('googleBtn', { static: false })
   set googleBtn(el: ElementRef<HTMLElement> | undefined) {
     this._googleBtn = el;
     if (el && !this.currentUser) {
-      setTimeout(() => this.auth.renderGoogleButton(el.nativeElement), 0);
+      setTimeout(() => this.googleIdentityService.renderGoogleButton(el.nativeElement), 0);
     }
   }
 
@@ -55,7 +59,7 @@ export class Authentication implements OnInit, AfterViewInit, OnDestroy {
 
   private tryRenderButton(user: AuthUser | null) {
     if (!user && this._googleBtn?.nativeElement) {
-      this.auth.renderGoogleButton(this._googleBtn.nativeElement);
+      this.googleIdentityService.renderGoogleButton(this._googleBtn.nativeElement);
     }
   }
 }

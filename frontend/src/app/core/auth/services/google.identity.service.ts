@@ -1,9 +1,11 @@
 import {Injectable, NgZone, Inject, PLATFORM_ID, inject} from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { AuthService, AuthUser } from './auth.service'; // Import your other service
+import {isPlatformBrowser} from '@angular/common';
+import {AuthService, AuthUser} from './auth.service';
 
 declare global {
-  interface Window { google: any; }
+  interface Window {
+    google: any;
+  }
 }
 
 interface TokenResponse {
@@ -11,7 +13,7 @@ interface TokenResponse {
   user?: AuthUser;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class GoogleIdentityService {
   private readonly authService = inject(AuthService);
 
@@ -53,7 +55,10 @@ export class GoogleIdentityService {
     }
 
     const tryInit = () => {
-      if (!window.google?.accounts?.id) { setTimeout(tryInit, 50); return; }
+      if (!window.google?.accounts?.id) {
+        setTimeout(tryInit, 50);
+        return;
+      }
 
       window.google.accounts.id.initialize({
         client_id: clientId,
@@ -75,8 +80,8 @@ export class GoogleIdentityService {
     try {
       const res = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken, nonce }),
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({idToken, nonce}),
       });
 
       if (!res.ok) throw new Error('Auth failed');

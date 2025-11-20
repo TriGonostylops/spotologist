@@ -14,6 +14,11 @@ export interface TokenResponse {
   user?: AuthUser;
 }
 
+interface IssuedNonce {
+  nonce: string;
+  expiresIn: number;
+}
+
 declare global {
   interface Window { google: any }
 }
@@ -22,6 +27,7 @@ declare global {
 export class AuthService {
   private tokenKey = 'spotologist.jwt';
   private userKey = 'spotologist.user';
+  private nonceKey = 'spotologist.nonce';
 
   private userSubject = new BehaviorSubject<AuthUser | null>(this.readUser());
   user$ = this.userSubject.asObservable();
@@ -45,17 +51,28 @@ export class AuthService {
     return meta?.content || '';
   }
 
-  initGoogle() {
+  async initGoogle() {
     if (!this.isBrowser()) return;
     const clientId = this.getClientId();
     if (!clientId) {
       console.warn('[Auth] Missing google-client-id meta tag content');
       return;
     }
+    let issued: IssuedNonce | null = null;
+    try {
+      issued = await this.fetchNonce();
+      if (issued?.nonce) {
+        localStorage.setItem(this.nonceKey, issued.nonce);
+      }
+    } catch {
+      console.warn('[Auth] Failed to fetch nonce; proceeding without it');
+    }
+
     const tryInit = () => {
       if (!window.google?.accounts?.id) { setTimeout(tryInit, 50); return; }
       window.google.accounts.id.initialize({
         client_id: clientId,
+        nonce: issued?.nonce,
         callback: (resp: any) => this.zone.run(() => this.onGoogleCredential(resp)),
       });
     };
@@ -76,12 +93,15 @@ export class AuthService {
 
   private async onGoogleCredential(resp: { credential: string }) {
     const idToken = resp.credential;
+    let nonce: string | null = null;
+    try { nonce = localStorage.getItem(this.nonceKey); } catch {}
+    try { localStorage.removeItem(this.nonceKey); } catch {}
     const base = this.getApiBaseUrl();
     const url = base ? `${base}/api/auth/google` : `/api/auth/google`;
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ idToken }),
+      body: JSON.stringify({ idToken, nonce }),
     });
     if (!res.ok) {
       console.error('[Auth] Auth failed', res.status, await res.text().catch(()=>'') );
@@ -112,6 +132,7 @@ export class AuthService {
     }
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
+    try { localStorage.removeItem(this.nonceKey); } catch {}
     this.userSubject.next(null);
   }
 
@@ -122,5 +143,13 @@ export class AuthService {
 
   private isBrowser(): boolean {
     return typeof window !== 'undefined' && typeof document !== 'undefined';
+  }
+
+  private async fetchNonce(): Promise<IssuedNonce> {
+    const base = this.getApiBaseUrl();
+    const url = base ? `${base}/api/auth/nonce` : `/api/auth/nonce`;
+    const res = await fetch(url, { method: 'GET' });
+    if (!res.ok) throw new Error('Failed to fetch nonce');
+    return res.json();
   }
 }

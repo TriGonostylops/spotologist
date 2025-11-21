@@ -1,6 +1,9 @@
-import {Injectable, NgZone, Inject, PLATFORM_ID, inject} from '@angular/core';
+import {Inject, inject, Injectable, NgZone, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
-import {AuthService, AuthUser} from './auth.service';
+import {AuthService} from './auth.service';
+import {HttpClient} from '@angular/common/http';
+import {firstValueFrom} from 'rxjs';
+import {TokenResponse} from '../types/TokenResponse';
 
 declare global {
   interface Window {
@@ -8,24 +11,26 @@ declare global {
   }
 }
 
-interface TokenResponse {
-  accessToken: string;
-  user?: AuthUser;
-}
-
 @Injectable({providedIn: 'root'})
 export class GoogleIdentityService {
   private readonly authService = inject(AuthService);
+  private readonly http = inject(HttpClient);
+
+  // Nonce is kept in-memory to avoid races/overwrites and ensure the same value
+  // is used for both GIS initialize() and the backend POST.
+  private initialized = false;
+  private currentNonce: string | null = null;
 
   constructor(
     private zone: NgZone,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) {
+  }
 
   renderGoogleButton(el: HTMLElement) {
     if (!this.isBrowser()) return;
 
-    this.initGoogle().then(() => {
+    this.initGoogle(true).then(() => {
       const tryRender = () => {
         if (!window.google?.accounts?.id) {
           setTimeout(tryRender, 50);
@@ -39,19 +44,21 @@ export class GoogleIdentityService {
     });
   }
 
-  private async initGoogle() {
+  private async initGoogle(withFreshNonce: boolean = true) {
     const clientId = this.getClientId();
     if (!clientId) return;
 
     let nonce: string | null = null;
-    try {
-      const issued = await this.fetchNonce();
-      if (issued?.nonce) {
-        nonce = issued.nonce;
-        this.authService.setNonce(nonce);
+    if (withFreshNonce || !this.currentNonce) {
+      try {
+        const issued = await this.fetchNonce();
+        nonce = issued?.nonce ?? null;
+      } catch (e) {
+        console.warn('Nonce fetch failed; will retry init later');
+        return;
       }
-    } catch (e) {
-      console.warn('Nonce fetch failed, proceeding without');
+    } else {
+      nonce = this.currentNonce;
     }
 
     const tryInit = () => {
@@ -62,57 +69,44 @@ export class GoogleIdentityService {
 
       window.google.accounts.id.initialize({
         client_id: clientId,
-        nonce: nonce,
+        nonce: nonce ?? undefined,
         callback: (resp: any) => this.zone.run(() => this.onGoogleCredential(resp)),
       });
+      this.currentNonce = nonce ?? null;
+      this.initialized = true;
     };
     tryInit();
   }
 
   private async onGoogleCredential(resp: { credential: string }) {
     const idToken = resp.credential;
-    const nonce = this.authService.getNonce();
-    this.authService.clearNonce(); // Consume the nonce
+    const nonce = this.currentNonce;
 
     const base = this.getApiBaseUrl();
     const url = base ? `${base}/api/auth/google` : `/api/auth/google`;
 
     try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({idToken, nonce}),
-      });
+      const data = await firstValueFrom(
+        this.http.post<TokenResponse>(url, { idToken, nonce })
+      );
 
-      if (!res.ok) throw new Error('Auth failed');
+      this.currentNonce = null;
+      if (data.user) {
+        this.authService.setSession(data.accessToken, data.user);
+      }
 
-      const data: TokenResponse = await res.json();
-
-      let user = data.user || this.decodeUserFromToken(data.accessToken);
-
-      this.authService.setSession(data.accessToken, user);
-
-    } catch (error) {
+    } catch (error: any) {
       console.error('Google Login Failed', error);
-    }
-  }
-
-  private decodeUserFromToken(token: string): AuthUser {
-    try {
-      const [, payload] = token.split('.');
-      const json = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
-      return { sub: json.sub, email: json.email, name: json.name };
-    } catch {
-      return { sub: 'unknown' };
+      if (error?.status === 401) {
+        await this.initGoogle(true);
+      }
     }
   }
 
   private async fetchNonce(): Promise<{ nonce: string }> {
     const base = this.getApiBaseUrl();
     const url = base ? `${base}/api/auth/nonce` : `/api/auth/nonce`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('Failed to fetch nonce');
-    return res.json();
+    return await firstValueFrom(this.http.get<{ nonce: string }>(url));
   }
 
   private getApiBaseUrl(): string {

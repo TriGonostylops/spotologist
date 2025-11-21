@@ -59,8 +59,7 @@ public class GoogleTokenVerifier {
 
             String subject = claims.getSubject();
             String email = claims.getStringClaim("email");
-            String name = (String) claims.getClaim("name");
-            return new GoogleUser(subject, email, name);
+            return new GoogleUser(subject, email);
         } catch (Exception e) {
             throw new BadCredentialsException("Invalid Google ID token", e);
         }

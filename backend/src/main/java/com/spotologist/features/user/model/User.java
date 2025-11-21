@@ -2,32 +2,30 @@ package com.spotologist.features.user.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @Column(name = "sub", nullable = false, length = 255)
-    private String sub;
-
-    @Column(name = "email", length = 255)
+    @GeneratedValue
+    @Column(name = "id", nullable = false)
+    @Setter(AccessLevel.NONE)
+    private UUID id;
     private String email;
-
-    @Column(name = "name", length = 255)
-    private String name;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;

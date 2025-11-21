@@ -65,7 +65,7 @@ databaseChangeLog:
               - column:
                   name: owner_sub
                   type: VARCHAR(255)
-                  remarks: Owner identifier from authentication subject (e.g., Google subject)
+                  remarks: Owner identifier from authentication-component subject (e.g., Google subject)
               - column:
                   name: created_at
                   type: TIMESTAMP

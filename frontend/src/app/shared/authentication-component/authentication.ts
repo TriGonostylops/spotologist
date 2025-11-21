@@ -6,13 +6,13 @@ import {AuthUser} from '../../core/auth/types/AuthUser';
 import {GoogleIdentityService} from '../../core/auth/services/google.identity.service';
 
 @Component({
-  selector: 'app-authentication',
+  selector: 'authentication-component',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './authentication.html',
   styleUrl: './authentication.scss',
 })
-export class Authentication implements OnInit, AfterViewInit, OnDestroy {
+export class AuthenticationComponent implements OnInit, AfterViewInit, OnDestroy {
   private _googleBtn?: ElementRef<HTMLElement>;
   private readonly googleIdentityService = inject(GoogleIdentityService);
 

@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { Authentication } from '../../shared/authentication/authentication';
+import {AuthenticationComponent} from '../../shared/authentication-component/authentication';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, Authentication],
+  imports: [RouterLink, RouterLinkActive, AuthenticationComponent],
   templateUrl: './header.html',
   styleUrl: './header.scss'
 })

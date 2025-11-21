@@ -1,6 +1,8 @@
 package com.spotologist.authentication;
 
+import com.spotologist.authentication.model.IdTokenRequest;
 import com.spotologist.authentication.model.IssuedNonce;
+import com.spotologist.authentication.model.TokenResponse;
 import com.spotologist.common.GoogleTokenVerifier;
 import com.spotologist.authentication.model.GoogleUser;
 import com.spotologist.features.user.service.UserService;
@@ -67,7 +69,4 @@ public class AuthController {
 
         return ResponseEntity.ok(new TokenResponse(token, expirySeconds));
     }
-
-    public record IdTokenRequest(String idToken, String nonce) {}
-    public record TokenResponse(String accessToken, long expiresIn) {}
 }

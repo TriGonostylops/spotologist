@@ -1,4 +1,4 @@
-package com.spotologist.authentication;
+package com.spotologist.authentication.service;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;

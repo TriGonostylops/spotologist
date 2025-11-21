@@ -49,6 +49,23 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
+                        .bearerTokenResolver(request -> {
+                            String method = request.getMethod();
+                            String path = request.getRequestURI();
+                            boolean isPublic =
+                                    ("GET".equals(method) && ("/api/spots/hello".equals(path)
+                                            || "/api/spots".equals(path)
+                                            || path.startsWith("/api/spots/")))
+                                            || ("GET".equals(method) && "/api/auth/nonce".equals(path))
+                                            || ("POST".equals(method) && "/api/auth/google".equals(path))
+                                            || ("OPTIONS".equals(method));
+                            if (isPublic) {
+                                return null; // skip bearer auth for public endpoints
+                            }
+                            org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver resolver =
+                                    new org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver();
+                            return resolver.resolve(request);
+                        })
                         .jwt(Customizer.withDefaults())
                 )
                 .build();

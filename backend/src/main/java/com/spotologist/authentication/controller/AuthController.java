@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final NonceService nonceService;
     private final AuthService authService;
+
     public AuthController(NonceService nonceService, AuthService authService) {
         this.nonceService = nonceService;
         this.authService = authService;

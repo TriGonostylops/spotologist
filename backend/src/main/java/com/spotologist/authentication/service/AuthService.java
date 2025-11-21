@@ -4,6 +4,7 @@ import com.spotologist.authentication.model.GoogleUser;
 import com.spotologist.authentication.model.IdTokenRequest;
 import com.spotologist.authentication.model.TokenResponse;
 import com.spotologist.common.GoogleTokenVerifier;
+import com.spotologist.features.user.model.User;
 import com.spotologist.features.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,17 +32,26 @@ public class AuthService {
     }
 
     public ResponseEntity<TokenResponse> getAndMapGoogleToken(IdTokenRequest req) {
-        if (req.nonce() == null || !nonceService.consume(req.nonce())) {
+        if (req.nonce() == null || !nonceService.exists(req.nonce())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        GoogleUser user = googleTokenVerifier.verify(req.idToken(), req.nonce());
+        GoogleUser googleUser;
+        try {
+            googleUser = googleTokenVerifier.verify(req.idToken(), req.nonce());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-        userService.upsert(user);
+        if (!nonceService.consume(req.nonce())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User user = userService.upsertFromGoogle(googleUser);
 
         Instant now = Instant.now();
         long expirySeconds = 3600; // 1 hour
-        JwtClaimsSet claims = JwtClaimsSet.builder().issuer("spotologist-backend").issuedAt(now).expiresAt(now.plusSeconds(expirySeconds)).subject(user.subject()).claim("email", user.email()).build();
+        JwtClaimsSet claims = JwtClaimsSet.builder().issuer("spotologist-backend").issuedAt(now).expiresAt(now.plusSeconds(expirySeconds)).subject(user.getId().toString()).build();
 
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
         String token = this.jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();

@@ -42,4 +42,9 @@ public class NonceService {
 
         return nonceCache.asMap().remove(nonce) != null;
     }
+
+    public boolean exists(String nonce) {
+        if (nonce == null || nonce.isBlank()) return false;
+        return nonceCache.getIfPresent(nonce) != null;
+    }
 }

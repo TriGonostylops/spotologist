@@ -61,7 +61,6 @@ public class AuthController {
                 .expiresAt(now.plusSeconds(expirySeconds))
                 .subject(user.subject())
                 .claim("email", user.email())
-                .claim("name", user.name())
                 .build();
 
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();

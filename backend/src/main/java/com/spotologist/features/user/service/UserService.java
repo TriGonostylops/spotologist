@@ -20,11 +20,10 @@ public class UserService {
         User user = userRepository.findById(googleUser.subject())
                 .map(existing -> {
                     existing.setEmail(googleUser.email());
-                    existing.setName(googleUser.name());
                     existing.setLastLogin(Instant.now());
                     return existing;
                 })
-                .orElseGet(() -> new User(googleUser.subject(), googleUser.email(), googleUser.name(), Instant.now(), Instant.now()));
+                .orElseGet(() -> new User(googleUser.subject(), googleUser.email(), Instant.now(), Instant.now()));
         userRepository.save(user);
     }
 }

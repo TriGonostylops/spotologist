@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: 0004-create-user
+      id: 0004-create-users
       author: gingusz
       changes:
         - createTable:
-            tableName: user
+            tableName: users
             columns:
               - column:
                   name: id
@@ -59,7 +59,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseTableName: auth_identities
             baseColumnNames: user_id
-            referencedTableName: user
+            referencedTableName: users
             referencedColumnNames: id
             constraintName: fk_auth_identities_user
             onDelete: CASCADE

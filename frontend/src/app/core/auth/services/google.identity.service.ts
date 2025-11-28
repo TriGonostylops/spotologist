@@ -1,9 +1,10 @@
 import {Inject, inject, Injectable, NgZone, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import {AuthService} from './auth.service';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {firstValueFrom} from 'rxjs';
 import {TokenResponse} from '../types/TokenResponse';
+import {AuthUser} from '../types/AuthUser';
 
 declare global {
   interface Window {
@@ -15,10 +16,6 @@ declare global {
 export class GoogleIdentityService {
   private readonly authService = inject(AuthService);
   private readonly http = inject(HttpClient);
-
-  // Nonce is kept in-memory to avoid races/overwrites and ensure the same value
-  // is used for both GIS initialize() and the backend POST.
-  private initialized = false;
   private currentNonce: string | null = null;
 
   constructor(
@@ -73,7 +70,7 @@ export class GoogleIdentityService {
         callback: (resp: any) => this.zone.run(() => this.onGoogleCredential(resp)),
       });
       this.currentNonce = nonce ?? null;
-      this.initialized = true;
+      // initialized successfully
     };
     tryInit();
   }
@@ -92,9 +89,9 @@ export class GoogleIdentityService {
 
       this.currentNonce = null;
 
-      // Always persist the backend-issued JWT and store backend userId as AuthUser.sub
       if (data?.accessToken && data?.userId) {
-        this.authService.setSession(data.accessToken, { sub: data.userId });
+        const userPromise = this.fetchUserDto(data.accessToken, data.userId);
+        await this.authService.setSession(data.accessToken, userPromise);
       }
 
     } catch (error: any) {
@@ -125,5 +122,24 @@ export class GoogleIdentityService {
 
   private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
+  }
+
+  private async fetchUserDto(accessToken: string, userId: string): Promise<AuthUser> {
+    const base = this.getApiBaseUrl();
+    const url = base ? `${base}/user/name` : `/user/name`;
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${accessToken}`
+    });
+
+    try {
+      const dto = await firstValueFrom(this.http.get<any>(url, { headers }));
+      return {
+        id: userId,
+        email: dto?.email,
+        username: dto?.username ?? "PLACEHOLDER"
+      };
+    } catch (e) {
+      return { id: userId } as AuthUser;
+    }
   }
 }

@@ -7,7 +7,6 @@ import {AuthUser} from '../types/AuthUser';
 export class AuthService {
   private tokenKey = 'spotologist.jwt';
   private userKey = 'spotologist.user';
-  private nonceKey = 'spotologist.nonce';
 
   private userSubject = new BehaviorSubject<AuthUser | null>(this.readUser());
   user$ = this.userSubject.asObservable();
@@ -46,23 +45,7 @@ export class AuthService {
 
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
-    localStorage.removeItem(this.nonceKey);
     this.userSubject.next(null);
-  }
-
-  getNonce(): string | null {
-    if (!this.isBrowser()) return null;
-    return localStorage.getItem(this.nonceKey);
-  }
-
-  setNonce(nonce: string) {
-    if (!this.isBrowser()) return;
-    localStorage.setItem(this.nonceKey, nonce);
-  }
-
-  clearNonce() {
-    if (!this.isBrowser()) return;
-    localStorage.removeItem(this.nonceKey);
   }
 
   private readUser(): AuthUser | null {

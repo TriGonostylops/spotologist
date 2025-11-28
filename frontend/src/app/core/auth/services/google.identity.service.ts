@@ -16,8 +16,6 @@ declare global {
 export class GoogleIdentityService {
   private readonly authService = inject(AuthService);
   private readonly http = inject(HttpClient);
-
-  private initialized = false;
   private currentNonce: string | null = null;
 
   constructor(
@@ -72,7 +70,7 @@ export class GoogleIdentityService {
         callback: (resp: any) => this.zone.run(() => this.onGoogleCredential(resp)),
       });
       this.currentNonce = nonce ?? null;
-      this.initialized = true;
+      // initialized successfully
     };
     tryInit();
   }

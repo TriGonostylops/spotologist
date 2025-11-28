@@ -1,4 +1,4 @@
 package com.spotologist.authentication.model;
 
-public record TokenResponse(String accessToken, long expiresIn) {}
+public record TokenResponse(String accessToken, long expiresIn, String userId) {}
 

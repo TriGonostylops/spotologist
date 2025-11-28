@@ -56,6 +56,6 @@ public class AuthService {
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
         String token = this.jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
 
-        return ResponseEntity.ok(new TokenResponse(token, expirySeconds));
+        return ResponseEntity.ok(new TokenResponse(token, expirySeconds, user.getId().toString()));
     }
 }

@@ -91,8 +91,10 @@ export class GoogleIdentityService {
       );
 
       this.currentNonce = null;
-      if (data.user) {
-        this.authService.setSession(data.accessToken, data.user);
+
+      // Always persist the backend-issued JWT and store backend userId as AuthUser.sub
+      if (data?.accessToken && data?.userId) {
+        this.authService.setSession(data.accessToken, { sub: data.userId });
       }
 
     } catch (error: any) {

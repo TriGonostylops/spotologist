@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -60,10 +61,9 @@ public class SecurityConfig {
                                             || ("POST".equals(method) && "/api/auth/google".equals(path))
                                             || ("OPTIONS".equals(method));
                             if (isPublic) {
-                                return null; // skip bearer auth for public endpoints
+                                return null;
                             }
-                            org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver resolver =
-                                    new org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver();
+                            DefaultBearerTokenResolver resolver = new DefaultBearerTokenResolver();
                             return resolver.resolve(request);
                         })
                         .jwt(Customizer.withDefaults())

@@ -7,6 +7,6 @@ export class SpotsService {
   private readonly http = inject(HttpClient);
 
   hello(): Observable<string> {
-    return this.http.get('http://localhost:8080/api/spots/hello', { responseType: 'text' as const });
+    return this.http.get('http://localhost:8080/user/name', { responseType: 'text' as const });
   }
 }

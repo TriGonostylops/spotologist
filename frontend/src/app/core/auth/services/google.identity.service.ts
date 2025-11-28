@@ -142,4 +142,23 @@ export class GoogleIdentityService {
   private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
+
+  private async fetchUserDto(accessToken: string, userId: string): Promise<AuthUser> {
+    const base = this.getApiBaseUrl();
+    const url = base ? `${base}/user/name` : `/user/name`;
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${accessToken}`
+    });
+
+    try {
+      const dto = await firstValueFrom(this.http.get<any>(url, { headers }));
+      return {
+        id: userId,
+        email: dto?.email,
+        username: dto?.username ?? "PLACEHOLDER"
+      };
+    } catch (e) {
+      return { id: userId } as AuthUser;
+    }
+  }
 }

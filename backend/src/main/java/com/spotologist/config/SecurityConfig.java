@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -49,6 +50,22 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
+                        .bearerTokenResolver(request -> {
+                            String method = request.getMethod();
+                            String path = request.getRequestURI();
+                            boolean isPublic =
+                                    ("GET".equals(method) && ("/api/spots/hello".equals(path)
+                                            || "/api/spots".equals(path)
+                                            || path.startsWith("/api/spots/")))
+                                            || ("GET".equals(method) && "/api/auth/nonce".equals(path))
+                                            || ("POST".equals(method) && "/api/auth/google".equals(path))
+                                            || ("OPTIONS".equals(method));
+                            if (isPublic) {
+                                return null;
+                            }
+                            DefaultBearerTokenResolver resolver = new DefaultBearerTokenResolver();
+                            return resolver.resolve(request);
+                        })
                         .jwt(Customizer.withDefaults())
                 )
                 .build();

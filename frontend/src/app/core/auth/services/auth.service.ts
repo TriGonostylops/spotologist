@@ -1,12 +1,7 @@
 import {Injectable, Inject, PLATFORM_ID} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {isPlatformBrowser} from '@angular/common';
-
-export interface AuthUser {
-  sub: string;
-  email?: string;
-  name?: string;
-}
+import {AuthUser} from '../types/AuthUser';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -25,11 +20,19 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  setSession(accessToken: string, user: AuthUser) {
+  async setSession(accessToken: string, userPromise: Promise<AuthUser>): Promise<void> {
     if (!this.isBrowser()) return;
     localStorage.setItem(this.tokenKey, accessToken);
-    localStorage.setItem(this.userKey, JSON.stringify(user));
-    this.userSubject.next(user);
+
+    try {
+      const user = await userPromise;
+      localStorage.setItem(this.userKey, JSON.stringify(user));
+      this.userSubject.next(user);
+    } catch (e) {
+      localStorage.removeItem(this.userKey);
+      localStorage.removeItem(this.tokenKey);
+      throw e;
+    }
   }
 
   signOut() {

@@ -51,7 +51,7 @@ export class AuthenticationComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   displayLabel(user: AuthUser): string {
-    return user.username || user.email || user.name || 'Account';
+    return user.username || user.email || 'Account';
   }
 
   toggleMenu() { this.menuOpen = !this.menuOpen; }

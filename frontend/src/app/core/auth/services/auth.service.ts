@@ -1,12 +1,7 @@
 import {Injectable, Inject, PLATFORM_ID} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {isPlatformBrowser} from '@angular/common';
-
-export interface AuthUser {
-  sub: string;
-  email?: string;
-  name?: string;
-}
+import {AuthUser} from '../types/AuthUser';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -25,11 +20,19 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  setSession(accessToken: string, user: AuthUser) {
+  async setSession(accessToken: string, userPromise: Promise<AuthUser>): Promise<void> {
     if (!this.isBrowser()) return;
     localStorage.setItem(this.tokenKey, accessToken);
-    localStorage.setItem(this.userKey, JSON.stringify(user));
-    this.userSubject.next(user);
+
+    try {
+      const user = await userPromise;
+      localStorage.setItem(this.userKey, JSON.stringify(user));
+      this.userSubject.next(user);
+    } catch (e) {
+      localStorage.removeItem(this.userKey);
+      localStorage.removeItem(this.tokenKey);
+      throw e;
+    }
   }
 
   signOut() {
@@ -47,19 +50,16 @@ export class AuthService {
     this.userSubject.next(null);
   }
 
-  getNonce(): string | null {
-    if (!this.isBrowser()) return null;
-    return localStorage.getItem(this.nonceKey);
-  }
-
-  setNonce(nonce: string) {
-    if (!this.isBrowser()) return;
-    localStorage.setItem(this.nonceKey, nonce);
-  }
-
-  clearNonce() {
-    if (!this.isBrowser()) return;
-    localStorage.removeItem(this.nonceKey);
+  public hasStoredUser(): boolean {
+    if (!this.isBrowser()) return false;
+    try {
+      const raw = localStorage.getItem(this.userKey);
+      if (!raw) return false;
+      const parsed = JSON.parse(raw);
+      return !!parsed;
+    } catch {
+      return false;
+    }
   }
 
   private readUser(): AuthUser | null {

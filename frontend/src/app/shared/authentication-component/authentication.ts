@@ -19,7 +19,7 @@ export class AuthenticationComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild('googleBtn', { static: false })
   set googleBtn(el: ElementRef<HTMLElement> | undefined) {
     this._googleBtn = el;
-    if (el && !this.currentUser) {
+    if (el && !this.currentUser && !this.auth.hasStoredUser()) {
       setTimeout(() => this.googleIdentityService.renderGoogleButton(el.nativeElement), 0);
     }
   }
@@ -51,14 +51,14 @@ export class AuthenticationComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   displayLabel(user: AuthUser): string {
-    return user.username || user.email || user.name || 'Account';
+    return user.email || user.username || 'Account';
   }
 
   toggleMenu() { this.menuOpen = !this.menuOpen; }
   signOut() { this.auth.signOut(); this.menuOpen = false; }
 
   private tryRenderButton(user: AuthUser | null) {
-    if (!user && this._googleBtn?.nativeElement) {
+    if (!user && !this.auth.hasStoredUser() && this._googleBtn?.nativeElement) {
       this.googleIdentityService.renderGoogleButton(this._googleBtn.nativeElement);
     }
   }

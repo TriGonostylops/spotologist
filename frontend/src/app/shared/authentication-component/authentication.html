@@ -5,6 +5,7 @@
     </button>
     @if (menuOpen) {
       <div class="menu" role="menu">
+        <button type="button" routerLink="/profile" role="menuitem" (click)="menuOpen = false">Profile</button>
         <button type="button" (click)="signOut()" role="menuitem">Sign out</button>
       </div>
     }

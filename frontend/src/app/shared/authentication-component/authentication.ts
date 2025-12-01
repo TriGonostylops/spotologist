@@ -1,5 +1,6 @@
 import {Component, ElementRef, OnDestroy, OnInit, AfterViewInit, ViewChild, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/services/auth.service';
 import { Observable, Subscription } from 'rxjs';
 import {AuthUser} from '../../core/auth/types/AuthUser';
@@ -8,7 +9,7 @@ import {GoogleIdentityService} from '../../core/auth/services/google.identity.se
 @Component({
   selector: 'authentication-component',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './authentication.html',
   styleUrl: './authentication.scss',
 })

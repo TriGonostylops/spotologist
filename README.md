@@ -1,8 +1,20 @@
-# Spotologist Backend
+# Spotologist
+### Key concept: 
+ - Share your favourite spots
+ - Get recommendations by your intrests.
+ - Connect with friends.
+ - Catalouge your favourite spots.
+---
+ ### Tech stack:
+ 
+ - Monorepo structure.
+ - Java Spring backend with PostgreSQL.
+ - Liquibase (database migrations)
+ - Mapstruct (mapping)
+ - Angular 20 frontend.
+ - Auth: OIDC on frontchannel, nonce for extra security mitigation.
 
-Spring Boot backend with PostgreSQL.
-
-## Run DB only (backend)
+## Run DB only (for backend)
 
 ```powershell
 # from project root

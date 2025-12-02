@@ -16,6 +16,7 @@ declare global {
 export class GoogleIdentityService {
   private readonly authService = inject(AuthService);
   private readonly http = inject(HttpClient);
+
   private currentNonce: string | null = null;
 
   constructor(
@@ -70,7 +71,6 @@ export class GoogleIdentityService {
         callback: (resp: any) => this.zone.run(() => this.onGoogleCredential(resp)),
       });
       this.currentNonce = nonce ?? null;
-      // initialized successfully
     };
     tryInit();
   }
@@ -99,6 +99,25 @@ export class GoogleIdentityService {
       if (error?.status === 401) {
         await this.initGoogle(true);
       }
+    }
+  }
+
+  private async fetchUserDto(accessToken: string, userId: string): Promise<AuthUser> {
+    const base = this.getApiBaseUrl();
+    const url = base ? `${base}/user/name` : `/user/name`;
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${accessToken}`
+    });
+
+    try {
+      const dto = await firstValueFrom(this.http.get<any>(url, { headers }));
+      return {
+        id: userId,
+        email: dto?.email,
+        username: dto?.username ?? 'PLACEHOLDER'
+      } as AuthUser;
+    } catch (e) {
+      return { id: userId } as AuthUser;
     }
   }
 

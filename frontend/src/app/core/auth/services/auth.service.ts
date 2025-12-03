@@ -48,6 +48,12 @@ export class AuthService {
     this.userSubject.next(null);
   }
 
+  restoreFromStorage(): void {
+    if (!this.isBrowser()) return;
+    const user = this.readUser();
+    this.userSubject.next(user);
+  }
+
   private readUser(): AuthUser | null {
     if (!this.isBrowser()) return null;
     try {

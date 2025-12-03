@@ -126,7 +126,7 @@ export class GoogleIdentityService {
 
   private async fetchUserDto(accessToken: string, userId: string): Promise<AuthUser> {
     const base = this.getApiBaseUrl();
-    const url = base ? `${base}/user/name` : `/user/name`;
+    const url = base ? `${base}/user/me` : `/user/me`;
     const headers = new HttpHeaders({
       Authorization: `Bearer ${accessToken}`
     });
@@ -136,8 +136,8 @@ export class GoogleIdentityService {
       return {
         id: userId,
         email: dto?.email,
-        username: dto?.username ?? "PLACEHOLDER"
-      };
+        userName: dto?.userName ?? "PLACEHOLDER"
+      } as AuthUser;
     } catch (e) {
       return { id: userId } as AuthUser;
     }

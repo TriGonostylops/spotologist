@@ -70,7 +70,6 @@ export class GoogleIdentityService {
         callback: (resp: any) => this.zone.run(() => this.onGoogleCredential(resp)),
       });
       this.currentNonce = nonce ?? null;
-      // initialized successfully
     };
     tryInit();
   }
@@ -136,7 +135,7 @@ export class GoogleIdentityService {
       return {
         id: userId,
         email: dto?.email,
-        userName: dto?.userName ?? "PLACEHOLDER"
+        username: dto?.userName ?? "PLACEHOLDER"
       } as AuthUser;
     } catch (e) {
       return { id: userId } as AuthUser;

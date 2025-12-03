@@ -20,8 +20,8 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/name")
-    public ResponseEntity<UserDto> getUserNameById(@AuthenticationPrincipal Jwt jwt){
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getUserDetails(@AuthenticationPrincipal Jwt jwt){
         return ResponseEntity.ok().body(userService.getUserNameById(jwt.getSubject()));
     }
 }

@@ -1,0 +1,37 @@
+<div class="backdrop" (click)="onCancel()"></div>
+<div class="modal" role="dialog" aria-modal="true" aria-labelledby="usernameTitle">
+  <h2 id="usernameTitle">Choose your username</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <label for="username">Username</label>
+    <input id="username" type="text" formControlName="username" autocomplete="off" spellcheck="false"
+           [class.invalid]="usernameCtrl.invalid && (usernameCtrl.dirty || usernameCtrl.touched)" />
+
+    <div class="hint">3–30 chars; letters, numbers, underscore, dot. Case-insensitive.</div>
+
+    <div class="error" *ngIf="usernameCtrl.errors && (usernameCtrl.dirty || usernameCtrl.touched)">
+      <div *ngIf="usernameCtrl.errors['required']">Username is required.</div>
+      <div *ngIf="usernameCtrl.errors['minlength']">Too short.</div>
+      <div *ngIf="usernameCtrl.errors['maxlength']">Too long.</div>
+      <div *ngIf="usernameCtrl.errors['pattern']">Only letters, numbers, '_' and '.' are allowed.</div>
+    </div>
+
+    <div class="availability" *ngIf="usernameCtrl.valid && usernameCtrl.value">
+      <ng-container [ngSwitch]="availability">
+        <span *ngSwitchCase="'checking'">Checking availability…</span>
+        <span *ngSwitchCase="'available'" class="ok">Available</span>
+        <span *ngSwitchCase="'taken'" class="err">Already taken</span>
+        <span *ngSwitchCase="'error'" class="err">Could not check right now</span>
+      </ng-container>
+    </div>
+
+    <div class="actions">
+      <button type="button" (click)="onCancel()" [disabled]="submitting">Cancel</button>
+      <button type="submit" [disabled]="!form.valid || availability !== 'available' || submitting">
+        {{ submitting ? 'Saving…' : 'Save' }}
+      </button>
+    </div>
+
+    <div class="submit-error" *ngIf="submitError">{{ submitError }}</div>
+  </form>
+</div>

@@ -1,0 +1,101 @@
+/* Basic styles for the username prompt modal */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 420px);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  padding: 20px 22px;
+  z-index: 1001;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  font-weight: 600;
+}
+
+input[type="text"] {
+  padding: 10px 12px;
+  border: 1px solid #c7c7c7;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+input.invalid {
+  border-color: #e53935;
+  background: #ffebee;
+}
+
+.hint {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.error {
+  color: #e53935;
+  font-size: 0.85rem;
+}
+
+.availability {
+  font-size: 0.9rem;
+}
+
+.availability .ok {
+  color: #2e7d32;
+}
+
+.availability .err {
+  color: #e65100;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.actions button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #c7c7c7;
+  background: #f7f7f7;
+  cursor: pointer;
+}
+
+.actions button[type="submit"] {
+  background: #1976d2;
+  border-color: #1976d2;
+  color: #fff;
+}
+
+.actions button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-error {
+  color: #e53935;
+  margin-top: 6px;
+}

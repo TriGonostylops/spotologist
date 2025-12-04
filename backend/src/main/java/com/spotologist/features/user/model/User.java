@@ -34,6 +34,6 @@ public class User {
     @Column(name = "last_login", nullable = false)
     private Instant lastLogin;
 
-    @Column(name = "user_name", nullable = false)
+    @Column(name = "user_name")
     private String userName;
 }

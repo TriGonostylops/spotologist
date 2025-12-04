@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0003-alter-users-table
+      author: spotologist
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: user_name
+                  type: VARCHAR(255)
+                  defaultValue: "Lazy solution"
+                  constraints:
+                    nullable: false
+                    unique: true
+      rollback:
+        - dropColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: user_name

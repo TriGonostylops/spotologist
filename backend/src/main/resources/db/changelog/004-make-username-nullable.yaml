@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0004-alter-users-username
+      author: spotologist
+      changes:
+        - dropDefaultValue:
+            tableName: users
+            columnName: user_name
+        - dropNotNullConstraint:
+            tableName: users
+            columnName: user_name
+            columnDataType: VARCHAR(255)
+        - sql:
+            stripComments: true
+            splitStatements: true
+            sql: |
+              ALTER TABLE users DROP CONSTRAINT IF EXISTS users_user_name_key;
+              ALTER TABLE users DROP CONSTRAINT IF EXISTS uq_users_user_name;
+              DROP INDEX IF EXISTS uq_users_lower_user_name;
+        - sql:
+            sql: |
+              UPDATE users SET user_name = NULL WHERE user_name = 'Lazy solution';
+        - sql:
+            stripComments: true
+            splitStatements: false
+            sql: |
+              CREATE UNIQUE INDEX IF NOT EXISTS uq_users_lower_user_name
+              ON users (lower(user_name));
+
+      rollback:
+        - sql:
+            sql: |
+              DROP INDEX IF EXISTS uq_users_lower_user_name;
+        - addNotNullConstraint:
+            tableName: users
+            columnName: user_name
+            columnDataType: VARCHAR(255)
+        - addDefaultValue:
+            tableName: users
+            columnName: user_name
+            defaultValue: 'Lazy solution'
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: user_name
+            constraintName: uq_users_user_name

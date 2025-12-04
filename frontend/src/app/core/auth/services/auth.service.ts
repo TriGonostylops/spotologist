@@ -34,6 +34,20 @@ export class AuthService {
     }
   }
 
+  updateCurrentUser(user: AuthUser | null): void {
+    if (!this.isBrowser()) return;
+    if (user) {
+      localStorage.setItem(this.userKey, JSON.stringify(user));
+    } else {
+      localStorage.removeItem(this.userKey);
+    }
+    this.userSubject.next(user);
+  }
+
+  get currentUser(): AuthUser | null {
+    return this.userSubject.value;
+  }
+
   signOut() {
     if (!this.isBrowser()) return;
 
@@ -46,6 +60,12 @@ export class AuthService {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
     this.userSubject.next(null);
+  }
+
+  restoreFromStorage(): void {
+    if (!this.isBrowser()) return;
+    const user = this.readUser();
+    this.userSubject.next(user);
   }
 
   private readUser(): AuthUser | null {

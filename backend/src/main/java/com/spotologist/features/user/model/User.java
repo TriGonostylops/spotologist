@@ -25,6 +25,7 @@ public class User {
     @Column(name = "id", nullable = false)
     @Setter(AccessLevel.NONE)
     private UUID id;
+
     private String email;
 
     @Column(name = "created_at", nullable = false)
@@ -32,4 +33,7 @@ public class User {
 
     @Column(name = "last_login", nullable = false)
     private Instant lastLogin;
+
+    @Column(name = "user_name")
+    private String userName;
 }

@@ -5,10 +5,9 @@ import com.spotologist.features.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/user")
@@ -20,8 +19,25 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/name")
-    public ResponseEntity<UserDto> getUserNameById(@AuthenticationPrincipal Jwt jwt){
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getUserDetails(@AuthenticationPrincipal Jwt jwt){
         return ResponseEntity.ok().body(userService.getUserNameById(jwt.getSubject()));
+    }
+
+    public record UsernameUpdateRequest(String userName) {}
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/username/check")
+    public ResponseEntity<Void> checkAvailability(@RequestParam("name") String name) {
+        boolean available = userService.isUsernameAvailable(name);
+        return available ? ResponseEntity.ok().build() : ResponseEntity.status(409).build();
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PutMapping("/username")
+    public ResponseEntity<Void> setUsername(@AuthenticationPrincipal Jwt jwt,
+                                            @Valid @RequestBody UsernameUpdateRequest body) {
+        userService.setUsernameFor(jwt.getSubject(), body.userName());
+        return ResponseEntity.noContent().build();
     }
 }

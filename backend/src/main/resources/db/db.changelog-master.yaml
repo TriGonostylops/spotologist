@@ -3,3 +3,7 @@ databaseChangeLog:
       file: db/changelog/create-spot-table.yaml
   - include:
       file: db/changelog/create-users-table.yaml
+  - include:
+      file: db/changelog/003-alter-users-table.yaml
+  - include:
+      file: db/changelog/004-make-username-nullable.yaml

@@ -135,7 +135,7 @@ export class GoogleIdentityService {
       return {
         id: userId,
         email: dto?.email,
-        username: dto?.userName ?? "PLACEHOLDER"
+        username: dto?.userName ?? undefined
       } as AuthUser;
     } catch (e) {
       return { id: userId } as AuthUser;

@@ -9,6 +9,9 @@
         <button type="button" (click)="signOut()" role="menuitem">Sign out</button>
       </div>
     }
+    @if (showUsernamePrompt) {
+      <app-username-prompt (completed)="onUsernameCompleted()" (cancelled)="onUsernameCancelled()"></app-username-prompt>
+    }
   } @else {
     <div #googleBtn></div>
   }

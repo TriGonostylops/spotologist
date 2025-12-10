@@ -19,12 +19,12 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  async setSession(accessToken: string, userPromise: Promise<AuthUser>): Promise<void> {
+  async setSession(accessToken: string, userFactory: () => Promise<AuthUser>): Promise<void> {
     if (!this.isBrowser()) return;
     localStorage.setItem(this.tokenKey, accessToken);
 
     try {
-      const user = await userPromise;
+      const user = await userFactory();
       localStorage.setItem(this.userKey, JSON.stringify(user));
       this.userSubject.next(user);
     } catch (e) {

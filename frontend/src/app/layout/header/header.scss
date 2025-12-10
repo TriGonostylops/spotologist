@@ -1,29 +1,138 @@
+/* Mobile-first header with off-canvas navigation (OG console color scheme) */
+
 .app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100; /* header itself */
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .brand {
   font-weight: 600;
 }
 
-.nav {
+/* Desktop nav hidden by default (mobile-first) */
+.desktop-nav,
+.desktop-auth {
+  display: none;
+}
+
+/* Hamburger button */
+.menu-toggle {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.menu-toggle .bar {
+  width: 18px;
+  height: 2px;
+  background: var(--text);
+  display: block;
+}
+
+/* Backdrop overlay when menu is open (below the drawer, above page) */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 900; /* below the side-nav; ensure focus prominence */
+}
+
+/* Off-canvas side navigation */
+.side-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100dvh;
+  width: 80vw;
+  max-width: 320px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  transform: translateX(-100%);
+  transition: transform 220ms ease;
+  z-index: 1000; /* higher than everything when active */
+  display: flex;
+  flex-direction: column;
+}
+
+.side-nav.open {
+  transform: translateX(0);
+}
+
+.side-nav-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: 1rem 1rem;
+  border-bottom: 1px solid var(--border);
 }
 
+.close-btn {
+  font-size: 1.5rem;
+  line-height: 1;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.close-btn:hover { background: var(--hover); }
+
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  padding: .5rem;
+}
+
+.mobile-nav a,
 .nav a {
-  color: inherit;
+  color: var(--text);
   text-decoration: none;
-  padding: .25rem .5rem;
-  border-radius: 4px;
+  padding: .5rem .75rem;
+  border-radius: 6px;
 }
 
+.mobile-nav a:hover,
+.nav a:hover {
+  background: var(--hover);
+}
+
+.mobile-nav a.active,
 .nav a.active {
-  background: #f3f4f6;
+  background: rgba(124, 209, 255, 0.12); /* accent tint for active state */
+}
+
+.side-auth {
+  padding: .5rem 1rem 1rem;
+  margin-top: auto; /* push auth to bottom in drawer */
+}
+
+.safe-area-spacer {
+  height: env(safe-area-inset-bottom, 0px);
+}
+
+/* Desktop breakpoint */
+@media (min-width: 768px) {
+  .menu-toggle { display: none; }
+  .desktop-nav, .desktop-auth { display: flex; }
+  .desktop-nav { align-items: center; gap: 1rem; }
 }

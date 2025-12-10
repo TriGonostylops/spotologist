@@ -5,13 +5,7 @@ import { SpotsService } from './spots.service';
 @Component({
   selector: 'app-spots',
   imports: [CommonModule],
-  template: `
-    <section style="padding: 1rem">
-      <h2>Spots</h2>
-      <p>Backend says:</p>
-      <pre style="background:#f5f5f5;padding:.5rem;border-radius:4px">{{ message || 'Loading...' }}</pre>
-    </section>
-  `
+  templateUrl: './spots.html'
 })
 export class SpotsComponent implements OnInit {
   private readonly spotsService = inject(SpotsService);

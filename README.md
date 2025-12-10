@@ -1,4 +1,5 @@
 # Spotologist
+``` Nothing serious, i'm just bored ```
 ### Key concept: 
  - Share your favourite spots
  - Get recommendations by your intrests.

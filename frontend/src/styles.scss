@@ -1,1 +1,109 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles: console-inspired dark theme + readable UTF-capable font stack */
+
+/* Prefer loading fonts via index.html <link> for performance.
+   For simplicity here, we use a CSS import. If you later in-line links in index.html,
+   you can remove this @import safely. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans:wght@400;500;600&display=swap');
+
+:root {
+  /* Hint UA widgets to use dark styling for built-ins (inputs, scrollbars, etc.) */
+  color-scheme: dark;
+
+  /* Console-like, but easy on eyes */
+  --bg: #0c1116;           /* very dark blue-gray */
+  --surface: #0f141a;      /* slightly lighter for cards/headers */
+  --text: #e6edf3;         /* high-contrast, not pure white */
+  --text-muted: #9fb0c0;   /* muted text */
+  --primary: #7ee787;      /* soft green (terminal vibe) */
+  --accent: #7cd1ff;       /* cyan accent */
+  --warning: #f4d371;      /* amber */
+  --danger: #ffa198;       /* soft red */
+  --success: #3fb950;      /* green */
+  --border: #1f2a34;       /* subtle borders */
+  --hover: #111922;        /* hover background */
+
+  --radius: 8px;
+  --focus-ring: 0 0 0 3px rgba(124, 209, 255, 0.35);
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-family:
+    'Inter', 'Noto Sans',
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji',
+    sans-serif;
+  line-height: 1.5;
+}
+
+/* Typographic rhythm */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text);
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+
+p { margin: 0 0 1rem; color: var(--text); }
+small, .text-muted { color: var(--text-muted); }
+
+/* Links */
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+/* Basic surfaces */
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* Inputs and buttons, keep it minimal and non-intrusive */
+input, select, textarea {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.625rem;
+}
+
+button {
+  background: linear-gradient(0deg, rgba(126,231,135,0.12), rgba(126,231,135,0.12));
+  color: var(--text);
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  padding: 0.5rem 0.875rem;
+  cursor: pointer;
+}
+button:hover { background: var(--hover); }
+button:focus, input:focus, select:focus, textarea:focus { outline: none; box-shadow: var(--focus-ring); }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; }
+th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; }
+thead th { background: var(--surface); }
+tbody tr:nth-child(odd) { background: rgba(255,255,255,0.015); }
+
+/* Utility text colors for status */
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-danger  { color: var(--danger); }
+
+/* Scrollbar (WebKit/Blink) - subtle */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background-color: #1b2530; border-radius: 8px; border: 2px solid #0c1116; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* Ensure Angular Material or other libs inherit vars without being forced */
+.theme-root { color-scheme: dark; }

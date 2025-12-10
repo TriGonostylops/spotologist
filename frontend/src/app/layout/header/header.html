@@ -8,7 +8,6 @@
     aria-controls="side-nav"
     (click)="toggleMenu()"
   >
-    <!-- Simple icon (you can replace with an SVG) -->
     <span class="bar"></span>
     <span class="bar"></span>
     <span class="bar"></span>
@@ -16,18 +15,24 @@
 
   <div class="brand">Spotologist</div>
 
-  <!-- Desktop primary navigation -->
   <nav class="nav desktop-nav" aria-label="Primary">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Spots</a>
+    @if (auth.user$ | async) {
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    }
   </nav>
 
-  <authentication-component class="desktop-auth"></authentication-component>
+  <div class="desktop-auth">
+    @if (auth.user$ | async) {
+      <button type="button" (click)="signOut()">Sign out</button>
+    } @else {
+      <authentication-component></authentication-component>
+    }
+  </div>
 </header>
 
-<!-- Backdrop overlay when menu open -->
 <div class="backdrop" *ngIf="isMenuOpen" (click)="closeMenu()"></div>
 
-<!-- Off-canvas side navigation -->
 <aside id="side-nav" class="side-nav" [class.open]="isMenuOpen" (click)="onLinkClick($event)">
   <div class="side-nav-header">
     <div class="brand">Spotologist</div>
@@ -35,9 +40,16 @@
   </div>
   <nav class="mobile-nav" aria-label="Primary">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Spots</a>
+    @if (auth.user$ | async) {
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    }
   </nav>
   <div class="side-auth">
-    <authentication-component></authentication-component>
+    @if (auth.user$ | async) {
+      <button type="button" (click)="signOut()">Sign out</button>
+    } @else {
+      <authentication-component></authentication-component>
+    }
   </div>
   <div class="safe-area-spacer"></div>
   <!-- spacer to avoid bottom unsafe areas on some devices -->

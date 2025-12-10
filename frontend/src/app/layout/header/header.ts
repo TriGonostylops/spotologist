@@ -1,7 +1,8 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import {AuthenticationComponent} from '../../shared/authentication-component/authentication';
+import { AuthService } from '../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -12,6 +13,7 @@ import {AuthenticationComponent} from '../../shared/authentication-component/aut
 })
 export class HeaderComponent {
   isMenuOpen = false;
+  protected readonly auth = inject(AuthService);
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
@@ -31,6 +33,11 @@ export class HeaderComponent {
 
   @HostListener('document:keydown.escape')
   onEsc(): void {
+    this.closeMenu();
+  }
+
+  signOut(): void {
+    this.auth.signOut();
     this.closeMenu();
   }
 }

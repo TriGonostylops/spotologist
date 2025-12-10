@@ -1,7 +1,7 @@
 import {Inject, inject, Injectable, NgZone, PLATFORM_ID} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import {AuthService} from './auth.service';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {firstValueFrom} from 'rxjs';
 import {TokenResponse} from '../types/TokenResponse';
 import {AuthUser} from '../types/AuthUser';
@@ -89,8 +89,7 @@ export class GoogleIdentityService {
       this.currentNonce = null;
 
       if (data?.accessToken && data?.userId) {
-        const userPromise = this.fetchUserDto(data.accessToken, data.userId);
-        await this.authService.setSession(data.accessToken, userPromise);
+        await this.authService.setSession(data.accessToken, () => this.fetchUserDto(data.userId));
       }
 
     } catch (error: any) {
@@ -123,15 +122,12 @@ export class GoogleIdentityService {
     return isPlatformBrowser(this.platformId);
   }
 
-  private async fetchUserDto(accessToken: string, userId: string): Promise<AuthUser> {
+  private async fetchUserDto(userId: string): Promise<AuthUser> {
     const base = this.getApiBaseUrl();
     const url = base ? `${base}/user/me` : `/user/me`;
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${accessToken}`
-    });
 
     try {
-      const dto = await firstValueFrom(this.http.get<any>(url, { headers }));
+      const dto = await firstValueFrom(this.http.get<any>(url));
       return {
         id: userId,
         email: dto?.email,

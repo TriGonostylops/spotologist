@@ -19,7 +19,6 @@ export class UsernameService {
     const url = base ? `${base}/user/username/check` : `/user/username/check`;
     const params = new HttpParams().set('name', name);
     try {
-      // Authorization header will be injected by the auth interceptor
       await firstValueFrom(this.http.get<void>(url, { params }));
       return true;
     } catch (e: any) {
@@ -31,14 +30,12 @@ export class UsernameService {
   async setUsername(name: string): Promise<void> {
     const base = this.getApiBaseUrl();
     const url = base ? `${base}/user/username` : `/user/username`;
-    // Authorization header will be injected by the auth interceptor
     await firstValueFrom(this.http.put<void>(url, { userName: name }));
   }
 
   async me(): Promise<AuthUser> {
     const base = this.getApiBaseUrl();
     const url = base ? `${base}/user/me` : `/user/me`;
-    // Authorization header will be injected by the auth interceptor
     const dto: any = await firstValueFrom(this.http.get<any>(url));
     return {
       id: this.auth.currentUser?.id ?? '',

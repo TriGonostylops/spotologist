@@ -14,7 +14,6 @@ export class SpotsService {
   hello(): Observable<string> {
     const base = this.getApiBaseUrl();
     const url = base ? `${base}/user/me` : `/user/me`;
-    // Authorization header (if any) will be injected by the auth interceptor
     return this.http.get(url, { responseType: 'text' as const });
   }
 }

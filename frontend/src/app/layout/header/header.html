@@ -1,9 +1,56 @@
 <header class="app-header">
+  <!-- Mobile: Hamburger -->
+  <button
+    class="menu-toggle"
+    type="button"
+    aria-label="Toggle navigation menu"
+    [attr.aria-expanded]="isMenuOpen"
+    aria-controls="side-nav"
+    (click)="toggleMenu()"
+  >
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </button>
+
   <div class="brand">Spotologist</div>
 
-  <nav class="nav" aria-label="Primary">
+  <nav class="nav desktop-nav" aria-label="Primary">
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Spots</a>
+    @if (auth.user$ | async) {
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    }
   </nav>
 
-  <authentication-component></authentication-component>
+  <div class="desktop-auth">
+    @if (auth.user$ | async) {
+      <button type="button" (click)="signOut()">Sign out</button>
+    } @else {
+      <authentication-component></authentication-component>
+    }
+  </div>
 </header>
+
+<div class="backdrop" *ngIf="isMenuOpen" (click)="closeMenu()"></div>
+
+<aside id="side-nav" class="side-nav" [class.open]="isMenuOpen" (click)="onLinkClick($event)">
+  <div class="side-nav-header">
+    <div class="brand">Spotologist</div>
+    <button class="close-btn" type="button" aria-label="Close menu" (click)="closeMenu()">×</button>
+  </div>
+  <nav class="mobile-nav" aria-label="Primary">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Spots</a>
+    @if (auth.user$ | async) {
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    }
+  </nav>
+  <div class="side-auth">
+    @if (auth.user$ | async) {
+      <button type="button" (click)="signOut()">Sign out</button>
+    } @else {
+      <authentication-component></authentication-component>
+    }
+  </div>
+  <div class="safe-area-spacer"></div>
+  <!-- spacer to avoid bottom unsafe areas on some devices -->
+</aside>

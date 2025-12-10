@@ -1,6 +1,5 @@
 import {Component, ElementRef, OnDestroy, OnInit, AfterViewInit, ViewChild, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/services/auth.service';
 import { Observable, Subscription } from 'rxjs';
 import {AuthUser} from '../../core/auth/types/AuthUser';
@@ -11,7 +10,7 @@ import {UsernameService} from '../../core/user/username.service';
 @Component({
   selector: 'authentication-component',
   standalone: true,
-  imports: [CommonModule, RouterLink, UsernamePromptComponent],
+  imports: [CommonModule, UsernamePromptComponent],
   templateUrl: './authentication.html',
   styleUrl: './authentication.scss',
 })
@@ -29,7 +28,6 @@ export class AuthenticationComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   user$!: Observable<AuthUser | null>;
-  menuOpen = false;
   private sub?: Subscription;
   private currentUser: AuthUser | null = null;
   showUsernamePrompt = false;
@@ -58,12 +56,8 @@ export class AuthenticationComponent implements OnInit, AfterViewInit, OnDestroy
     this.sub?.unsubscribe();
   }
 
-  displayLabel(user: AuthUser): string {
-    return user.username || user.email || 'Account';
-  }
-
-  toggleMenu() { this.menuOpen = !this.menuOpen; }
-  signOut() { this.auth.signOut(); this.menuOpen = false; }
+  // Note: Menu logic removed; this component only handles Google sign-in when unauthenticated
+  // and username prompt flow for users without a username.
 
   private tryRenderButton(user: AuthUser | null) {
     if (!user && this._googleBtn?.nativeElement) {
